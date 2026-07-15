@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-title">Balans va Limitlar Statistikasi</div>
+<div class="page-subtitle">Kredit limitlari, aylanma qarz oboroti va fondlar tahlili</div>
+
+<div class="stats-grid fade-in">
+    <div class="stat-card">
+        <div class="stat-icon primary"><i class="fa-regular fa-credit-card"></i></div>
+        <div class="stat-info">
+            <div class="stat-label">O'rtacha Kredit Limiti</div>
+            <div class="stat-value">{{ avg_credit_limit }}</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon warning"><i class="fa-solid fa-landmark"></i></div>
+        <div class="stat-info">
+            <div class="stat-label">O'rtacha Aylanma Balans</div>
+            <div class="stat-value">{{ avg_revolving_bal }}</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon info"><i class="fa-solid fa-chart-line"></i></div>
+        <div class="stat-info">
+            <div class="stat-label">Kreditdan Foydalanish</div>
+            <div class="stat-value">{{ avg_utilization }}</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon success"><i class="fa-solid fa-trophy"></i></div>
+        <div class="stat-info">
+            <div class="stat-label">Maksimal Limit</div>
+            <div class="stat-value">{{ max_credit_limit }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="card fade-in" style="margin-bottom:24px;">
+    <div class="card-header">
+        <div class="card-title"><i class="fa-solid fa-wave-square"></i> Kredit Limitlari Taqsimoti</div>
+    </div>
+    <div class="card-body">
+        <canvas id="limitChart" style="max-height:280px;"></canvas>
+    </div>
+</div>
+
+<div class="chart-grid fade-in">
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title"><i class="fa-solid fa-percent"></i> Karta Turi bo'yicha Foydalanish</div>
+        </div>
+        <div class="card-body" style="display:flex; align-items:center; min-height:240px;">
+            <canvas id="cardUtilChart" style="max-height:240px;"></canvas>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title"><i class="fa-solid fa-money-bill-wave"></i> Aylanma Balans Taqsimoti</div>
+        </div>
+        <div class="card-body">
+            <canvas id="revChart" style="max-height:240px;"></canvas>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    new Chart(document.getElementById('limitChart'), {
+        type: 'bar',
+        data: {
+            labels: {{ limit_labels| safe }},
+        datasets: [{ label: 'Mijozlar soni', data: {{ limit_values| safe }}, backgroundColor: '#93c5fd', borderRadius: 4 }]
+    },
+        options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true }, x: { ticks: { maxRotation: 45 } } } }
+});
+
+    new Chart(document.getElementById('cardUtilChart'), {
+        type: 'doughnut',
+        data: {
+            labels: {{ card_labels| safe }},
+        datasets: [{ data: {{ card_util| safe }}, backgroundColor: ['#2563eb', '#f59e0b', '#10b981', '#ef4444'], borderWidth: 3, borderColor: '#fff' }]
+    },
+        options: { plugins: { legend: { position: 'bottom' } }, cutout: '55%' }
+});
+
+    new Chart(document.getElementById('revChart'), {
+        type: 'bar',
+        data: {
+            labels: {{ rev_labels| safe }},
+        datasets: [{ label: 'Mijozlar', data: {{ rev_values| safe }}, backgroundColor: '#a78bfa', borderRadius: 4 }]
+    },
+        options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+});
+</script>
+{% endblock %}

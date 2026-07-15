@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-title">Mijozlar Ro'yxati</div>
+<div class="page-subtitle">Tizimga yuklangan barcha kredit karta mijozlarining to'liq jadvali. Ma'lumotlarni qidirish va
+    filtrlash imkoniyati mavjud.</div>
+
+<!-- Search Bar -->
+<div class="card fade-in" style="margin-bottom: 24px;">
+    <div class="card-body" style="padding: 16px 24px;">
+        <form method="GET" action="{% url 'customers' %}" style="display: flex; gap: 12px; align-items: center;">
+            <div style="position: relative; flex: 1;">
+                <i class="fa-solid fa-magnifying-glass"
+                    style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                <input type="text" name="q" value="{{ search }}"
+                    placeholder="Mijoz ID, jinsi, karta toifasi yoki daromadi bo'yicha qidiring..."
+                    style="width: 100%; padding: 12px 12px 12px 42px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; transition: border-color 0.2s;"
+                    onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+            </div>
+            <button type="submit" class="btn-primary"
+                style="background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-filter"></i> Qidirish
+            </button>
+            {% if search %}
+            <a href="{% url 'customers' %}"
+                style="color: var(--text-muted); text-decoration: none; font-size: 14px; padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px; background: #f8fafc;">
+                Tozalash
+            </a>
+            {% endif %}
+        </form>
+    </div>
+</div>
+
+<!-- Table Card -->
+<div class="card fade-in" style="animation-delay: 0.1s; margin-bottom: 24px;">
+    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="card-title">
+            <i class="fa-solid fa-table-list"></i> Jami topilgan mijozlar: <strong>{{ total_rows }} ta</strong>
+        </div>
+    </div>
+    <div class="card-body" style="padding: 0;">
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        {% for h in headers %}
+                        <th>
+                            {% if h == 'CLIENTNUM' %}Mijoz ID
+                            {% elif h == 'Attrition_Flag' %}Holati
+                            {% elif h == 'Customer_Age' %}Yosh
+                            {% elif h == 'Gender' %}Jins
+                            {% elif h == 'Education_Level' %}Ma'lumoti
+                            {% elif h == 'Income_Category' %}Daromadi
+                            {% elif h == 'Card_Category' %}Karta turi
+                            {% elif h == 'Credit_Limit' %}Kredit limiti
+                            {% elif h == 'Total_Revolving_Bal' %}Aylanma balans
+                            {% elif h == 'Total_Trans_Amt' %}Jami xarajat
+                            {% elif h == 'Total_Trans_Ct' %}Tranzaksiyalar soni
+                            {% else %}{{ h }}{% endif %}
+                        </th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in rows %}
+                    <tr>
+                        {% for cell in row %}
+                        <td>
+                            {% if forloop.counter == 2 %}
+                            {% if cell == 'Attrited Customer' %}
+                            <span
+                                style="background: #fef2f2; color: #ef4444; padding: 4px 8px; border-radius: 6px; font-weight: 500; font-size: 12px; border: 1px solid #fecaca;">Ketgan</span>
+                            {% else %}
+                            <span
+                                style="background: #f0fdf4; color: #10b981; padding: 4px 8px; border-radius: 6px; font-weight: 500; font-size: 12px; border: 1px solid #bbf7d0;">Faol</span>
+                            {% endif %}
+                            {% elif forloop.counter == 7 %}
+                            <span style="font-weight: 600; 
+                                    {% if cell == 'Blue' %}color: #2563eb;
+                                    {% elif cell == 'Silver' %}color: #64748b;
+                                    {% elif cell == 'Gold' %}color: #d97706;
+                                    {% elif cell == 'Platinum' %}color: #7c3aed;
+                                    {% endif %}">
+                                {{ cell }}
+                            </span>
+                            {% elif forloop.counter == 8 or forloop.counter == 9 or forloop.counter == 10 %}
+                            ${{ cell }}
+                            {% else %}
+                            {{ cell }}
+                            {% endif %}
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="{{ headers|length }}"
+                            style="text-align: center; padding: 40px; color: var(--text-muted);">
+                            <i class="fa-solid fa-folder-open"
+                                style="font-size: 32px; margin-bottom: 12px; display: block;"></i>
+                            Sizning qidirishingiz bo'yicha hech qanday mijoz topilmadi.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Pagination -->
+{% if total_pages > 1 %}
+<div class="fade-in"
+    style="display: flex; justify-content: center; gap: 8px; align-items: center; margin-bottom: 40px;">
+    {% if page > 1 %}
+    <a href="?page=1{% if search %}&q={{ search }}{% endif %}"
+        style="padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; text-decoration: none; color: var(--text-main); background: white;"><i
+            class="fa-solid fa-angles-left"></i></a>
+    <a href="?page={{ page|add:'-1' }}{% if search %}&q={{ search }}{% endif %}"
+        style="padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; text-decoration: none; color: var(--text-main); background: white;"><i
+            class="fa-solid fa-angle-left"></i></a>
+    {% endif %}
+
+    {% for p in page_range %}
+    <a href="?page={{ p }}{% if search %}&q={{ search }}{% endif %}"
+        style="padding: 8px 16px; border: 1px solid {% if p == page %}var(--primary){% else %}var(--border){% endif %}; border-radius: 6px; text-decoration: none; color: {% if p == page %}white{% else %}var(--text-main){% endif %}; background: {% if p == page %}var(--primary){% else %}white{% endif %}; font-weight: 500;">
+        {{ p }}
+    </a>
+    {% endfor %}
+
+    {% if page < total_pages %} <a href="?page={{ page|add:'1' }}{% if search %}&q={{ search }}{% endif %}"
+        style="padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; text-decoration: none; color: var(--text-main); background: white;">
+        <i class="fa-solid fa-angle-right"></i></a>
+        <a href="?page={{ total_pages }}{% if search %}&q={{ search }}{% endif %}"
+            style="padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; text-decoration: none; color: var(--text-main); background: white;"><i
+                class="fa-solid fa-angles-right"></i></a>
+        {% endif %}
+
+        <span style="font-size: 14px; color: var(--text-muted); margin-left: 12px;">Sahifa {{ page }} / {{ total_pages
+            }}</span>
+</div>
+{% endif %}
+
+{% endblock %}

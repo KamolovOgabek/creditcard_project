@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ro'yxatdan O'tish — CardAnalytics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f1f5f9;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 16px;
+            padding: 48px 40px;
+            width: 100%;
+            max-width: 460px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 32px;
+            text-decoration: none;
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            background: #2563eb;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .form-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
+
+        .form-subtitle {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            color: #0f172a;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .btn-register {
+            width: 100%;
+            padding: 13px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            margin-top: 6px;
+            transition: background 0.2s;
+        }
+
+        .btn-register:hover {
+            background: #1d4ed8;
+        }
+
+        .alt-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .alt-link a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 16px;
+        }
+
+        ul {
+            list-style: none;
+            font-size: 12px;
+            color: #ef4444;
+            margin-top: 6px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="form-card">
+        <a class="brand" href="{% url 'login' %}">
+            <div class="brand-icon"><i class="fa-solid fa-credit-card" style="color:white; font-size:16px;"></i></div>
+            <div class="brand-name">CardAnalytics</div>
+        </a>
+
+        <div class="form-title">Yangi hisob yaratish</div>
+        <div class="form-subtitle">Bank xodimi sifatida ro'yxatdan o'ting</div>
+
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert-error">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Foydalanuvchi nomi</label>
+                <input type="text" name="username" placeholder="masalan: alisher_bank" autofocus>
+            </div>
+            <div class="form-group">
+                <label>Parol</label>
+                <input type="password" name="password1" placeholder="Kamida 8 ta belgi">
+            </div>
+            <div class="form-group">
+                <label>Parolni tasdiqlang</label>
+                <input type="password" name="password2" placeholder="Parolni qayta kiriting">
+            </div>
+
+            {% if form.errors %}
+            <div class="alert-error">
+                {% for field in form %}
+                {% for error in field.errors %}<div>{{ error }}</div>{% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}<div>{{ error }}</div>{% endfor %}
+            </div>
+            {% endif %}
+
+            <button type="submit" class="btn-register"><i class="fa-solid fa-user-plus"></i> Ro'yxatdan o'tish</button>
+        </form>
+
+        <div class="alt-link">
+            Allaqachon hisobingiz bormi? <a href="{% url 'login' %}">Kiring</a>
+        </div>
+    </div>
+</body>
+
+</html>

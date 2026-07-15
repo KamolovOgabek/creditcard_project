@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-title">Mijozlar Xarajatlari Tahlili</div>
+<div class="page-subtitle">Kredit karta tranzaksiyalari oboroti va xarajat statistikasi</div>
+
+<div class="stats-grid fade-in">
+    <div class="stat-card">
+        <div class="stat-icon primary"><i class="fa-solid fa-money-bill-transfer"></i></div>
+        <div class="stat-info">
+            <div class="stat-label">Jami Tranzaksiyalar</div>
+            <div class="stat-value">{{ total_amount }}</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon success"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+        <div class="stat-info">
+            <div class="stat-label">O'rtacha (Mijoz)</div>
+            <div class="stat-value">{{ avg_amount }}</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon info"><i class="fa-solid fa-hashtag"></i></div>
+        <div class="stat-info">
+            <div class="stat-label">O'rtacha Amaliyotlar Soni</div>
+            <div class="stat-value">{{ avg_count }} marta</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon warning"><i class="fa-solid fa-arrow-trend-up"></i></div>
+        <div class="stat-info">
+            <div class="stat-label">Maksimal Xarajat</div>
+            <div class="stat-value">{{ max_amount }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="chart-grid fade-in">
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title"><i class="fa-solid fa-circle-nodes"></i> Tranzaksiya Soni vs Summa</div>
+        </div>
+        <div class="card-body">
+            <canvas id="scatterChart" style="max-height:300px;"></canvas>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title"><i class="fa-solid fa-graduation-cap"></i> Ta'lim Darajasi va O'rtacha Xarajat</div>
+        </div>
+        <div class="card-body">
+            <canvas id="eduChart" style="max-height:300px;"></canvas>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const scatter = {{ scatter_json| safe }};
+    new Chart(document.getElementById('scatterChart'), {
+        type: 'scatter',
+        data: {
+            datasets: [
+                {
+                    label: 'Faol Mijozlar',
+                    data: scatter.existing.x.map((x, i) => ({ x, y: scatter.existing.y[i] })),
+                    backgroundColor: 'rgba(37,99,235,0.4)', pointRadius: 3
+                },
+                {
+                    label: 'Ketgan Mijozlar',
+                    data: scatter.attrited.x.map((x, i) => ({ x, y: scatter.attrited.y[i] })),
+                    backgroundColor: 'rgba(239,68,68,0.5)', pointRadius: 3
+                }
+            ]
+        },
+        options: {
+            plugins: { legend: { position: 'top' } },
+            scales: { x: { title: { display: true, text: 'Tranzaksiyalar Soni' } }, y: { title: { display: true, text: 'Summa ($)' } } }
+        }
+    });
+
+    new Chart(document.getElementById('eduChart'), {
+        type: 'bar',
+        data: {
+            labels: {{ edu_labels| safe }},
+        datasets: [{ label: "O'rtacha Xarajat ($)", data: {{ edu_values| safe }}, backgroundColor: '#60a5fa', borderRadius: 4 }]
+    },
+        options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } }
+});
+</script>
+{% endblock %}

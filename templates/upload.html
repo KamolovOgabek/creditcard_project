@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-title">Ma'lumotlar Bazasini Boshqarish</div>
+<div class="page-subtitle">Tahlil qilish uchun yangi CSV ma'lumotlar to'plamini tizimga yuklang. Siz yuklagan fayl
+    xavfsiz tarzda saqlanadi va har safar kirmasligingiz uchun eslab qolinadi.</div>
+
+<div class="card fade-in" style="max-width: 600px; margin: 40px auto; overflow: visible;">
+    <div class="card-body" style="text-align: center; padding: 40px 30px;">
+        <i class="fa-solid fa-cloud-arrow-up" style="font-size: 54px; color: var(--primary); margin-bottom: 24px;"></i>
+        <h2 style="font-size: 24px; color: var(--text-main); margin-bottom: 12px; font-weight: 600;">BankChurners.csv
+            Yuklash</h2>
+        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 32px; line-height: 1.5;">
+            Kaggle'dan yuklab olingan rasmiy <strong>Credit Card Customers</strong> ma'lumotlar bazasini yuklang.
+            Tizim avtomatik tahlillarni shakllantiradi.
+        </p>
+
+        <form action="{% url 'upload_file' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label
+                style="display: block; border: 2px dashed var(--border); border-radius: 12px; padding: 32px; margin-bottom: 24px; cursor: pointer; transition: all 0.2s; background: var(--bg-color);"
+                onmouseover="this.style.borderColor='var(--primary)'"
+                onmouseout="this.style.borderColor='var(--border)'">
+                <i class="fa-solid fa-file-csv" style="font-size: 32px; color: #94a3b8; margin-bottom: 12px;"></i>
+                <div style="font-weight: 500; font-size: 16px; color: var(--text-main);">Faylni Tanlash (Browse)</div>
+                <div style="font-size: 13px; color: var(--text-muted); margin-top: 6px;">Faqatgina .csv formati</div>
+
+                <input type="file" name="csv_file" accept=".csv" required style="display: none;" onchange="
+                    document.getElementById('fname').textContent = this.files[0].name;
+                    document.getElementById('fname').style.display = 'block';
+                    document.getElementById('submit-btn').removeAttribute('disabled');
+                    document.getElementById('submit-btn').style.opacity = '1';
+                ">
+
+                <div id="fname"
+                    style="display: none; margin-top: 16px; font-weight: 600; color: var(--primary); font-size: 14px; background: #eff6ff; padding: 8px; border-radius: 6px;">
+                </div>
+            </label>
+
+            <button id="submit-btn" type="submit" disabled
+                style="background: var(--primary); color: white; border: none; padding: 14px 28px; border-radius: 8px; font-size: 15px; font-weight: 500; cursor: pointer; width: 100%; transition: all 0.2s; opacity: 0.6; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                Tizimga Kiritish va Boshlash
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

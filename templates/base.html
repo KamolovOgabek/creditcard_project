@@ -1,0 +1,114 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credit Card Customer Analysis</title>
+    <!-- Modern FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=2">
+</head>
+
+<body>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <button class="sidebar-close-btn" id="closeSidebarBtn" style="display: none;" title="Yopish">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="sidebar-header">
+            <h2><i class="fa-solid fa-credit-card"></i> CardAnalytics</h2>
+            <p>Mijozlar portfeli tahlili</p>
+        </div>
+
+        <nav class="nav-menu">
+            <div class="nav-title">Hisobotlar</div>
+
+            <a href="{% url 'dashboard' %}" class="nav-link {% if active_page == 'dashboard' %}active{% endif %}">
+                <i class="fa-solid fa-chart-pie"></i>
+                Vizual Ko'rsatkichlar
+            </a>
+
+            <a href="{% url 'spending' %}" class="nav-link {% if active_page == 'spending' %}active{% endif %}">
+                <i class="fa-solid fa-wallet"></i>
+                Xarajatlar Tahlili
+            </a>
+
+            <a href="{% url 'balance' %}" class="nav-link {% if active_page == 'balance' %}active{% endif %}">
+                <i class="fa-solid fa-scale-balanced"></i>
+                Balans Statistikasi
+            </a>
+
+            <a href="{% url 'customers' %}" class="nav-link {% if active_page == 'customers' %}active{% endif %}">
+                <i class="fa-solid fa-table-list"></i>
+                Mijozlar Ro'yxati
+            </a>
+
+            <div class="nav-title" style="margin-top: 24px;">Boshqaruv</div>
+            <a href="{% url 'upload_file' %}" class="nav-link {% if active_page == 'upload' %}active{% endif %}">
+                <i class="fa-solid fa-database"></i>
+                Ma'lumot Yüklash
+            </a>
+
+            <div class="nav-title" style="margin-top: 32px;">Loyiha Haqida</div>
+            <div class="nav-link" style="color: #64748b; font-size: 13px; display: block; border: 1px solid #334155;">
+                <div style="margin-bottom: 4px;"><strong>Loyiha Nomi:</strong> Credit Card Analysis</div>
+                <div style="margin-bottom: 4px;"><strong>Ma'lumotlar Bazas:</strong> BankChurners.csv</div>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-wrapper">
+        <header class="topbar">
+            <div class="mobile-header-left">
+                <button class="btn-toggle-sidebar" id="openSidebarBtn" style="display: none;" title="Menyu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div class="topbar-breadcrumbs">
+                    Hisobotlar / <span>{{ page_title }}</span>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div
+                    style="width: 34px; height: 34px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;">
+                    {{ user.username|make_list|first|upper }}
+                </div>
+                <div>
+                    <div style="font-weight: 600; font-size: 14px; color: #0f172a;">{{ user.username }}</div>
+                    <div style="font-size: 12px; color: #94a3b8;">Bank xodimi</div>
+                </div>
+                <a href="{% url 'logout' %}"
+                    style="margin-left: 12px; font-size: 13px; color: #64748b; text-decoration: none; display: flex; align-items: center; gap: 6px; background: #f1f5f9; padding: 7px 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                    <i class="fa-solid fa-right-from-bracket"></i> Chiqish
+                </a>
+            </div>
+        </header>
+
+        <section class="content-area">
+            {% block content %}{% endblock %}
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const openBtn = document.getElementById('openSidebarBtn');
+            const closeBtn = document.getElementById('closeSidebarBtn');
+
+            function toggleSidebar() {
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('active');
+            }
+
+            if (openBtn) openBtn.addEventListener('click', toggleSidebar);
+            if (closeBtn) closeBtn.addEventListener('click', toggleSidebar);
+            if (overlay) overlay.addEventListener('click', toggleSidebar);
+        });
+    </script>
+</body>
+
+</html>

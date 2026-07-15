@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-title">Umumiy Ko'rsatkichlar</div>
+<div class="page-subtitle">Kredit karta mijozlari holati va demografik ma'lumotlar</div>
+
+<div class="stats-grid fade-in">
+    <div class="stat-card">
+        <div class="stat-icon primary"><i class="fa-solid fa-users"></i></div>
+        <div class="stat-info">
+            <div class="stat-label">Jami Mijozlar</div>
+            <div class="stat-value">{{ total_customers }}</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon success"><i class="fa-solid fa-user-check"></i></div>
+        <div class="stat-info">
+            <div class="stat-label">Faol Mijozlar</div>
+            <div class="stat-value">{{ active_customers }}</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon danger"><i class="fa-solid fa-user-minus"></i></div>
+        <div class="stat-info">
+            <div class="stat-label">Ketish Darajasi (Churn)</div>
+            <div class="stat-value">{{ churn_rate }}</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon info"><i class="fa-solid fa-cake-candles"></i></div>
+        <div class="stat-info">
+            <div class="stat-label">O'rtacha Yosh</div>
+            <div class="stat-value">{{ avg_age }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="chart-grid fade-in">
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title"><i class="fa-solid fa-chart-pie"></i> Mijozlar Holati</div>
+        </div>
+        <div class="card-body" style="display:flex; align-items:center; justify-content:center; min-height:260px;">
+            <canvas id="attritionChart" style="max-height:260px;"></canvas>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title"><i class="fa-solid fa-chart-bar"></i> Daromad Toifalari</div>
+        </div>
+        <div class="card-body">
+            <canvas id="incomeChart" style="max-height:260px;"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="card fade-in" style="margin-top:24px;">
+    <div class="card-header">
+        <div class="card-title"><i class="fa-solid fa-chart-area"></i> Mijozlar Yoshi Taqsimoti</div>
+    </div>
+    <div class="card-body">
+        <canvas id="ageChart" style="max-height:280px;"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const attrition = {{ attrition_json| safe }};
+    new Chart(document.getElementById('attritionChart'), {
+        type: 'doughnut',
+        data: {
+            labels: attrition.labels,
+            datasets: [{ data: attrition.values, backgroundColor: attrition.colors, borderWidth: 3, borderColor: '#fff' }]
+        },
+        options: { plugins: { legend: { position: 'bottom' } }, cutout: '60%' }
+    });
+
+    const ageLabels = {{ age_labels| safe }};
+    const ageValues = {{ age_values| safe }};
+    new Chart(document.getElementById('ageChart'), {
+        type: 'bar',
+        data: {
+            labels: ageLabels,
+            datasets: [{ label: 'Mijozlar soni', data: ageValues, backgroundColor: '#93c5fd', borderColor: '#2563eb', borderWidth: 1, borderRadius: 4 }]
+        },
+        options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true }, x: { grid: { display: false } } } }
+    });
+
+    new Chart(document.getElementById('incomeChart'), {
+        type: 'bar',
+        data: {
+            labels: {{ income_labels| safe }},
+        datasets: [{ label: 'Mijozlar', data: {{ income_values| safe }}, backgroundColor: '#818cf8', borderRadius: 4 }]
+    },
+        options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true }, y: { grid: { display: false } } } }
+});
+</script>
+{% endblock %}
